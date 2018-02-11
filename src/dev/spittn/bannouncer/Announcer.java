@@ -141,10 +141,8 @@ public class Announcer {
 	public void restart() {
 		if (isRunning) {
 			stop();
-			start();
-		} else {
-			start();
 		}
+		start();
 	}
 
 	public void announceMessage(String id) {

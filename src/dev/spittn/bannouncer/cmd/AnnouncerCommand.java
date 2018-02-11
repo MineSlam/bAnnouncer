@@ -71,22 +71,22 @@ public class AnnouncerCommand implements CommandExecutor {
 			}
 			if (args[0].equalsIgnoreCase("setcentered")) {
 				message(sender, false, "&eYou have not selected a valid messageID and option.",
-						"&8/&eba setcentered &6<id> <y/n>");
+						" &8/&eba setcentered &6<id> <y/n>");
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("show")) {
 				message(sender, false, "&eYou have not selected a valid messageID.",
-						"&8/&eba show &6<id>");
+						" &8/&eba show &6<id>");
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("addsound")) {
 				message(sender, false, "&eYou have not selected a valid messageID and sound to add.",
-						"&8/&eba addsound &6<id> <sound>");
+						" &8/&eba addsound &6<id> <sound>");
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("broadcast") || args[0].equalsIgnoreCase("bc")) {
 				message(sender, false, "&eYou have not entered a message to be broadcasted.",
-						"&8/&eba " + args[0].toLowerCase() + " &6<text>");
+						" &8/&eba " + args[0].toLowerCase() + " &6<text>");
 				return true;
 			}
 			help(sender);

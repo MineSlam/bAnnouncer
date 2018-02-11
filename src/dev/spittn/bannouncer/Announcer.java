@@ -35,7 +35,7 @@ public class Announcer {
 			return;
 		}
 		
-		if (!config.contains("Broadcast-format")) {
+		if (!config.contains("Broadcast.format")) {
 			broadcastFormat = Arrays.asList(
 					"&8&m------------------------------------------",
 					"",

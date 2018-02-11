@@ -2,7 +2,11 @@ package dev.spittn.bannouncer.util;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-
+/**
+ * @Author SirSpoodles
+ * 
+ * @see https://www.spigotmc.org/threads/free-code-sending-perfectly-centered-chat-message.95872/
+ */
 public class Util {
 
 	private final static int CENTER_PX = 154;

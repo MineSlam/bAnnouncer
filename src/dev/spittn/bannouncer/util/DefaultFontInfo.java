@@ -1,5 +1,9 @@
 package dev.spittn.bannouncer.util;
-
+/**
+ * @Author SirSpoodles
+ * 
+ * @see https://www.spigotmc.org/threads/free-code-sending-perfectly-centered-chat-message.95872/
+ */
 public enum DefaultFontInfo {
 
     A('A', 5),

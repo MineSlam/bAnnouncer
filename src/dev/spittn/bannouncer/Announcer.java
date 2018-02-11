@@ -25,8 +25,9 @@ public class Announcer {
 	private List<String> messageIDs, centeredIDs, broadcastFormat;
 	private HashMap<String, List<Sound>> soundMap;
 
-	private boolean isRunning, isRandom, isBroadcastCentered;
+	private boolean isRunning, isRandom, isBroadcastCentered, usePAPI;
 	private int interval, current; 
+	
 	public Announcer() {
 		config = new SPTNFile("plugins/bAnnouncer/config.yml/");
 		if (!config.doesFileExist()) {
@@ -51,6 +52,8 @@ public class Announcer {
 		
 		interval = config.getInt("Interval"); 
 		isRandom = config.getBoolean("Random");
+		
+		usePAPI = Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI");
 		
 		messageIDs = Lists.newArrayList();
 		centeredIDs = Lists.newArrayList();
@@ -156,13 +159,25 @@ public class Announcer {
 				}
 			}
 			if (centeredIDs.contains(id)) {
-				for (String line : config.getStringList("Messages." + id)) {
-					Util.sendCenteredMessage(player, PlaceholderAPI.setPlaceholders(player, line).replace("&", "§"));
+				if (usePAPI) {
+					for (String line : config.getStringList("Messages." + id)) {
+						Util.sendCenteredMessage(player, PlaceholderAPI.setPlaceholders(player, line).replace("&", "§"));
+					}
+				} else {
+					for (String line : config.getStringList("Messages." + id)) {
+						Util.sendCenteredMessage(player, line.replace("&", "§"));
+					}
 				}
 			} else {
-				for (String line : config.getStringList("Messages." + id)) {
-					player.sendMessage(PlaceholderAPI.setPlaceholders(player, line).replace("&", "§"));
-				}	
+				if (usePAPI) {
+					for (String line : config.getStringList("Messages." + id)) {
+						player.sendMessage(PlaceholderAPI.setPlaceholders(player, line).replace("&", "§"));
+					}	
+				} else {
+					for (String line : config.getStringList("Messages." + id)) {
+						player.sendMessage(line.replace("&", "§"));
+					}	
+				}
 			}
 		}
 	}
@@ -177,12 +192,24 @@ public class Announcer {
 			}
 		}
 		if (centeredIDs.contains(id)) {
-			for (String line : config.getStringList("Messages." + id)) {
-				Util.sendCenteredMessage(player, PlaceholderAPI.setPlaceholders(player, line).replace("&", "§"));
+			if (usePAPI) {
+				for (String line : config.getStringList("Messages." + id)) {
+					Util.sendCenteredMessage(player, PlaceholderAPI.setPlaceholders(player, line).replace("&", "§"));
+				}
+			} else {
+				for (String line : config.getStringList("Messages." + id)) {
+					Util.sendCenteredMessage(player, line.replace("&", "§"));
+				}
 			}
 		} else {
-			for (String line : config.getStringList("Messages." + id)) {
-				player.sendMessage(PlaceholderAPI.setPlaceholders(player, line).replace("&", "§"));
+			if (usePAPI) {
+				for (String line : config.getStringList("Messages." + id)) {
+					player.sendMessage(PlaceholderAPI.setPlaceholders(player, line).replace("&", "§"));
+				}	
+			} else {
+				for (String line : config.getStringList("Messages." + id)) {
+					player.sendMessage(line.replace("&", "§"));
+				}	
 			}
 		}
 	}
@@ -240,6 +267,13 @@ public class Announcer {
 	
 	public boolean isRandom() {
 		return isRandom;
+	}
+	
+	/**
+	 * @return Is server using Clip's PlaceholderAPI
+	 */
+	public boolean isUsingPAPI() {
+		return usePAPI;
 	}
 	
 	public boolean isBroadcastCentered() {

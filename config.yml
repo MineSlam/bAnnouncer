@@ -1,4 +1,4 @@
-# bAnnouncer v1.2 by Spittn/Coltify.
+# bAnnouncer v1.2.3 by Spittn/Coltify.
 # Command -> /ba 
 # Permission node -> 'bannouncer.ba'
 # Message interval (In seconds).
@@ -10,6 +10,7 @@ Centered-messages:
   - "message1"
   - "message2"
   - "message3"
+
 # Want a sound to play when a certain announcement is broadcasted? 
 # Here is an up to date list of sounds you can use:
 # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
@@ -24,7 +25,7 @@ Messages:
     - ""
     - "&ebAnnouncer &6v1.2 &eby &6Coltify."
     - ""
-    - "&8&m------------------------------------------" 
+    - "&8&m------------------------------------------"
   message2:
     - "&8&m------------------------------------------" 
     - ""
@@ -37,3 +38,14 @@ Messages:
     - "&ebAnnouncer now has a &6Message centering&e feature!"
     - ""
     - "&8&m------------------------------------------" 
+
+# This is the format used for the command /ba broadcast <text>
+Broadcast:
+  format:
+    - "&8&m------------------------------------------" 
+    - ""
+    - "&e%text%"
+    - ""
+    - "&8&m------------------------------------------" 
+  centered: true
+  

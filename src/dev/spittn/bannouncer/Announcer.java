@@ -1,5 +1,6 @@
 package dev.spittn.bannouncer;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
@@ -21,13 +22,11 @@ public class Announcer {
 	private SPTNFile config;
 	private BukkitTask task;
 	
-	private List<String> messageIDs, centeredIDs;
+	private List<String> messageIDs, centeredIDs, broadcastFormat;
 	private HashMap<String, List<Sound>> soundMap;
 
-	private boolean isRunning;
+	private boolean isRunning, isRandom, isBroadcastCentered;
 	private int interval, current; 
-	private boolean random;
-	
 	public Announcer() {
 		config = new SPTNFile("plugins/bAnnouncer/config.yml/");
 		if (!config.doesFileExist()) {
@@ -36,8 +35,22 @@ public class Announcer {
 			return;
 		}
 		
+		if (!config.contains("Broadcast-format")) {
+			broadcastFormat = Arrays.asList(
+					"&8&m------------------------------------------",
+					"",
+					"&e%text%",
+					"",
+					"&8&m------------------------------------------");
+			config.set("Broadcast.format", broadcastFormat);
+			config.set("Broadcast.centered", true);
+		} else {
+			broadcastFormat = config.getStringList("Broadcast.format");
+			isBroadcastCentered = config.getBoolean("Broadcast.centered");
+		}
+		
 		interval = config.getInt("Interval"); 
-		random = config.getBoolean("Random");
+		isRandom = config.getBoolean("Random");
 		
 		messageIDs = Lists.newArrayList();
 		centeredIDs = Lists.newArrayList();
@@ -91,12 +104,12 @@ public class Announcer {
 					task.cancel();
 					return;
 				}
-				if (random) {
+				if (isRandom) {
 					// prevent having 2 or more messages appear after each other.
 					int rand = new Random().nextInt(messageIDs.size());
 					do {
 						rand = new Random().nextInt(messageIDs.size());
-					} while(current == rand);
+					} while (current == rand);
 					
 					current = rand;
 					announceMessage(messageIDs.get(current));
@@ -176,6 +189,30 @@ public class Announcer {
 		}
 	}
 	
+	public void broadcast(String text) {
+		for (Player player : Bukkit.getOnlinePlayers()) {
+			for (String line : broadcastFormat) {
+				if (line.contains("%text%") && text.contains("<nl>")) {
+					if (isBroadcastCentered) {
+						for (String part : text.split("<nl>")) {
+							Util.sendCenteredMessage(player, line.replace("&", "§").replace("%text%", part.replace("&", "§")));	
+						}
+					} else {
+						for (String part : text.split("<nl>")) {
+							player.sendMessage(line.replace("&", "§").replace("%text%", part.replace("&", "§")));	
+						}
+					}
+				} else {
+					if (isBroadcastCentered) {
+						Util.sendCenteredMessage(player, line.replace("&", "§").replace("%text%", text.replace("&", "§")));	
+					} else {
+						player.sendMessage(line.replace("&", "§").replace("%text%", text.replace("&", "§")));	
+					}
+				}
+			}
+		}
+	}
+	
 	public void printMessage(String id) {
 		id = id.toLowerCase();
 		for (String line : config.getStringList("Messages." + id)) {
@@ -204,7 +241,11 @@ public class Announcer {
 	}
 	
 	public boolean isRandom() {
-		return random;
+		return isRandom;
+	}
+	
+	public boolean isBroadcastCentered() {
+		return isBroadcastCentered;
 	}
 	
 	public int getInterval() {
@@ -236,11 +277,11 @@ public class Announcer {
 	}
 	
 	public void setRandom(boolean rand) {
-		if (random == rand) {
+		if (isRandom == rand) {
 			return;
 		}
-		random = rand;
-		config.set("Random", random);
+		isRandom = rand;
+		config.set("Random", isRandom);
 	}
 	
 	public void setCentered(String id) {

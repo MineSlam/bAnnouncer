@@ -84,8 +84,24 @@ public class AnnouncerCommand implements CommandExecutor {
 						"&8/&eba addsound &6<id> <sound>");
 				return true;
 			}
+			if (args[0].equalsIgnoreCase("broadcast") || args[0].equalsIgnoreCase("bc")) {
+				message(sender, false, "&eYou have not entered a message to be broadcasted.",
+						"&8/&eba " + args[0].toLowerCase() + " &6<text>");
+				return true;
+			}
 			help(sender);
 			return true;
+		}
+		
+		if (args.length >= 2) {
+			if (args[0].equalsIgnoreCase("broadcast") || args[0].equalsIgnoreCase("bc")) {
+				StringBuilder builder = new StringBuilder();
+				for (int i = 1; i < args.length; i++) {
+					builder.append(args[i] + " ");
+				}
+				announcer.broadcast(builder.toString());
+				return true;
+			}
 		}
 		
 		if (args.length == 2) {
@@ -209,7 +225,7 @@ public class AnnouncerCommand implements CommandExecutor {
 	private void help(CommandSender sender) {
 		message(sender, true,
 				"&8&m------------------------------------------", 
-				"&ebAnnouncer &6v1.2 &eby &6Spittn",
+				"&ebAnnouncer &6v1.2.3 &eby &6Spittn",
 				"&8&m------------------------------------------");
 		message(sender, false, 		
 				"&8&l»     &8/&eba setrandom &6<y/n> &8- &7Ranomize message order.",
@@ -218,6 +234,7 @@ public class AnnouncerCommand implements CommandExecutor {
 				"&8&l»     &8/&eba setcentered &6<id> <y/n> &8- &7Toggle message centering.",
 				"&8&l»     &8/&eba addsound &6<id> <sound> &8- &7Add any sound.",
 				"&8&l»     &8/&eba reload &8- &7Reload the config file.",
+				"&8&l»     &8/&eba broadcast &6<text> &8- &7Broadcast a message.",
 				"&8&l»     &8/&eba show &6<id> &8- &7View a message privately.",
 				"&8&l»     &8/&eba list &8- &7Lists all valid message IDs.");
 		message(sender, true,

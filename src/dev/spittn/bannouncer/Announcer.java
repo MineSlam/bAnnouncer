@@ -29,6 +29,11 @@ public class Announcer {
 	private int interval, current; 
 	
 	public Announcer() {
+		load();
+		start();
+	}
+	
+	public void load() {
 		config = new SPTNFile("plugins/bAnnouncer/config.yml/");
 		if (!config.doesFileExist()) {
 			System.out.println("[bAnnouncer] Could not locate configuration file!");
@@ -90,7 +95,6 @@ public class Announcer {
 			}
 		}
 
-		start();
 	}
 
 	public boolean start() {

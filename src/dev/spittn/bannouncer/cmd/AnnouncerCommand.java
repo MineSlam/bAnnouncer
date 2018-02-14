@@ -49,8 +49,8 @@ public class AnnouncerCommand implements CommandExecutor {
 				return true;
 			}
 			if (args[0].equalsIgnoreCase("reload")) {
-				Main.getInstance().saveConfig();
 				Main.getInstance().reloadConfig();
+				announcer.load();
 				message(sender, false, "&eYou have reloaded the configuration!");
 				return true;
 			}

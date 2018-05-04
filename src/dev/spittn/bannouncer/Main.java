@@ -12,11 +12,10 @@ public class Main extends JavaPlugin {
 	private static Announcer bAnnouncer;
 	
 	public void onEnable() {
+		saveDefaultConfig();
 		instance = this;
 		bAnnouncer = new Announcer();
 		new AnnouncerCommand();
-		
-		saveDefaultConfig();
 	}
 	
 	public void onDisable() {

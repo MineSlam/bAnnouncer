@@ -16,7 +16,7 @@ public class Main extends JavaPlugin {
 		bAnnouncer = new Announcer();
 		new AnnouncerCommand();
 		
-		saveConfig();
+		saveDefaultConfig();
 	}
 	
 	public void onDisable() {

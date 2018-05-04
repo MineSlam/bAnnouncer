@@ -1,4 +1,4 @@
-# bAnnouncer v1.2.3 by Spittn/Coltify.
+# bAnnouncer v1.2.4 by Spittn/Coltify.
 # Command -> /ba 
 # Permission node -> 'bannouncer.ba'
 # Message interval (In seconds).
@@ -48,4 +48,10 @@ Broadcast:
     - ""
     - "&8&m------------------------------------------" 
   centered: true
-  
+# Messages in this section will only be broadcasted to the player if they are in the specified world.
+World-messaging:
+  world:
+    - "message1"
+    - "message3"
+  nether:
+    - "message2"

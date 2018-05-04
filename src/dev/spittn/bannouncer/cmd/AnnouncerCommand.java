@@ -225,7 +225,7 @@ public class AnnouncerCommand implements CommandExecutor {
 	private void help(CommandSender sender) {
 		message(sender, true,
 				"&8&m------------------------------------------", 
-				"&ebAnnouncer &6v1.2.3 &eby &6Spittn",
+				"&ebAnnouncer &6v1.2.4 &eby &6Spittn",
 				"&8&m------------------------------------------");
 		message(sender, false, 		
 				"&8&l»     &8/&eba setrandom &6<y/n> &8- &7Ranomize message order.",

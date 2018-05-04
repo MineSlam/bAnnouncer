@@ -1,12 +1,13 @@
 package dev.spittn.bannouncer;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
@@ -24,6 +25,7 @@ public class Announcer {
 	
 	private List<String> messageIDs, centeredIDs, broadcastFormat;
 	private HashMap<String, List<Sound>> soundMap;
+	private HashMap<World, List<String>> worldMap;
 
 	private boolean isRunning, isRandom, isBroadcastCentered, usePAPI;
 	private int interval, current; 
@@ -41,22 +43,11 @@ public class Announcer {
 			return;
 		}
 		
-		if (!config.contains("Broadcast.format")) {
-			broadcastFormat = Arrays.asList(
-					"&8&m------------------------------------------",
-					"",
-					"&e%text%",
-					"",
-					"&8&m------------------------------------------");
-			config.set("Broadcast.format", broadcastFormat);
-			config.set("Broadcast.centered", true);
-		} else {
-			broadcastFormat = config.getStringList("Broadcast.format");
-			isBroadcastCentered = config.getBoolean("Broadcast.centered");
-		}
-		
 		interval = config.getInt("Interval"); 
 		isRandom = config.getBoolean("Random");
+		
+		broadcastFormat = config.getStringList("Broadcast.format");
+		isBroadcastCentered = config.getBoolean("Broadcast.centered");
 		
 		usePAPI = Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI");
 		
@@ -95,6 +86,22 @@ public class Announcer {
 			}
 		}
 
+		
+		if (config.getConfigurationSection("World-messaging") != null) {
+			for (String worldName : config.getConfigurationSection("World-messaaging").getKeys(false)) {
+				List<String> ids = config.getStringList("World-messaging." + worldName);
+				
+				World world = Bukkit.getWorld(worldName);
+				
+				if (world == null) {
+					System.out.println("[bAnnouncer] World '" + worldName + "' does not exist.");
+					return;
+				}
+				
+				if (!ids.isEmpty()) 
+					worldMap.put(world, ids);
+			}
+		}
 	}
 
 	public boolean start() {
@@ -155,6 +162,13 @@ public class Announcer {
 	public void announceMessage(String id) {
 		id = id.toLowerCase();
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+			if (!worldMap.isEmpty()) {
+				for (Entry<World, List<String>> entry : worldMap.entrySet()) {
+					if (entry.getValue().contains(id) && !player.getWorld().equals(entry.getKey())) {
+						return;
+					}
+				}
+			}
 			if (!soundMap.isEmpty()) {
 				if (soundMap.containsKey(id)) {
 					for (Sound s : soundMap.get(id)) {
@@ -188,6 +202,13 @@ public class Announcer {
 
 	public void sendMesssage(Player player, String id) {
 		id = id.toLowerCase();
+		if (!worldMap.isEmpty()) {
+			for (Entry<World, List<String>> entry : worldMap.entrySet()) {
+				if (entry.getValue().contains(id) && !player.getWorld().equals(entry.getKey())) {
+					return;
+				}
+			}
+		}
 		if (!soundMap.isEmpty()) {
 			if (soundMap.containsKey(id)) {
 				for (Sound s : soundMap.get(id)) {
@@ -393,6 +414,10 @@ public class Announcer {
 	
 	public HashMap<String, List<Sound>> getSoundMap() {
 		return soundMap;
+	}
+	
+	public HashMap<World, List<String>> getWorldMap() {
+		return worldMap;
 	}
 	
 	public int getCurrent() {

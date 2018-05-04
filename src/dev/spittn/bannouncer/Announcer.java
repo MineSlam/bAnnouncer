@@ -55,6 +55,7 @@ public class Announcer {
 		centeredIDs = Lists.newArrayList();
 		
 		soundMap = new HashMap<String, List<Sound>>();
+		worldMap = new HashMap<World, List<String>>();
 		
 		for (String id : config.getConfigurationSection("Messages").getKeys(false)) {
 			messageIDs.add(id.toLowerCase());

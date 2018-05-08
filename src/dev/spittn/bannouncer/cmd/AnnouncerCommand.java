@@ -88,15 +88,13 @@ public class AnnouncerCommand implements CommandExecutor {
 			return true;
 		}
 		
-		if (args.length >= 2) {
-			if (args[0].equalsIgnoreCase("broadcast") || args[0].equalsIgnoreCase("bc")) {
-				StringBuilder builder = new StringBuilder();
-				for (int i = 1; i < args.length; i++) {
-					builder.append(args[i] + " ");
-				}
-				announcer.broadcast(builder.toString());
-				return true;
+		if ((args.length >= 2) && (args[0].equalsIgnoreCase("broadcast") || args[0].equalsIgnoreCase("bc"))) {
+			StringBuilder builder = new StringBuilder();
+			for (int i = 1; i < args.length; i++) {
+				builder.append(args[i] + " ");
 			}
+			announcer.broadcast(builder.toString());
+			return true;			
 		}
 		
 		if (args.length == 2) {

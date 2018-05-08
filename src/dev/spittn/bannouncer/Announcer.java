@@ -38,7 +38,7 @@ public class Announcer {
 	public void load() {
 		config = new SPTNFile("plugins/bAnnouncer/config.yml/");
 		if (!config.doesFileExist()) {
-			System.out.println("[bAnnouncer] Could not locate configuration file!");
+			System.out.println("[bAnnouncer] [ERROR] Could not locate configuration file! Loading default configuration file.");
 			Main.getInstance().saveDefaultConfig();
 			return;
 		}

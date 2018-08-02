@@ -40,7 +40,7 @@ public class Announcer {
 		if (!config.doesFileExist()) {
 			System.out.println("[bAnnouncer] [ERROR] Could not locate configuration file! Loading default configuration file.");
 			Main.getInstance().saveDefaultConfig();
-			return;
+			config = new SPTNFile("plugins/bAnnouncer/config.yml/");
 		}
 		
 		interval = config.getInt("Interval"); 
@@ -89,7 +89,7 @@ public class Announcer {
 
 		
 		if (config.getConfigurationSection("World-messaging") != null) {
-			for (String worldName : config.getConfigurationSection("World-messaaging").getKeys(false)) {
+			for (String worldName : config.getConfigurationSection("World-messaging").getKeys(false)) {
 				List<String> ids = config.getStringList("World-messaging." + worldName);
 				
 				World world = Bukkit.getWorld(worldName);

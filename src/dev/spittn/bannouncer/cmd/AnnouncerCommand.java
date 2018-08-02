@@ -182,6 +182,7 @@ public class AnnouncerCommand implements CommandExecutor {
 				message(sender, false, "&eThe value you have entered is not a valid id! &8'&c" + args[1] + "&8'.");
 				return true;
 			}
+			
 			if (args[0].equalsIgnoreCase("addsound")) {
 				if (announcer.isValidID(args[1])) {
 					Sound s = null;
@@ -207,6 +208,7 @@ public class AnnouncerCommand implements CommandExecutor {
 				message(sender, false, "&eThe value you have entered is not a valid id! &8'&c" + args[1] + "&8'.");
 				return true;
 			}
+			
 			if (args[0].equalsIgnoreCase("remsound") || args[0].equalsIgnoreCase("delsound")) {
 				if (announcer.isValidID(args[1])) {
 					Sound s = null;

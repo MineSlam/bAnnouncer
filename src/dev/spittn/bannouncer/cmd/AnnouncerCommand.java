@@ -1,9 +1,15 @@
 package dev.spittn.bannouncer.cmd;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map.Entry;
+
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import com.mysql.jdbc.StringUtils;
@@ -12,12 +18,12 @@ import dev.spittn.bannouncer.Announcer;
 import dev.spittn.bannouncer.Main;
 import dev.spittn.bannouncer.util.Util;
 
-public class AnnouncerCommand implements CommandExecutor {
+public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 	
 	private Announcer announcer;
 	
 	public AnnouncerCommand() {
-		Main.registerCommand(this, "ba");
+		Main.registerCommand(this, "bannouncer");
 		announcer = Main.getbAnnouncer();
 	}
 	
@@ -240,6 +246,91 @@ public class AnnouncerCommand implements CommandExecutor {
 		help(sender);
 		
 		return false;
+	}
+	
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender, Command cmd, String commandLabel, String[] args) {
+		if (cmd.getName().equalsIgnoreCase("ba") || cmd.getName().equalsIgnoreCase("bannouncer")) {
+			if (args.length == 2) {
+				if (!(args[0].equalsIgnoreCase("delmessage") || args[0].equalsIgnoreCase("setcentered") || args[0].equalsIgnoreCase("broadcast") || args[0].equalsIgnoreCase("bc")
+						|| args[0].equalsIgnoreCase("show") || args[0].equalsIgnoreCase("addsound") || args[0].equalsIgnoreCase("remsound"))) {
+					return null;
+				}
+				ArrayList<String> ids = new ArrayList<String>();
+
+
+				if (!args[1].equals("")) {
+					for (String id : Main.getbAnnouncer().getMessageIDs()) {
+						if (id.toLowerCase().startsWith(args[1].toLowerCase())) {
+							ids.add(id);
+						}
+					}
+				}
+
+				else {
+					for (String id : Main.getbAnnouncer().getMessageIDs()) {
+						ids.add(id);
+					}
+				}
+
+				Collections.sort(ids);
+				
+				return ids;
+			}
+			
+			if (args.length == 3) {
+				if (!(args[0].equalsIgnoreCase("addsound") || args[0].equalsIgnoreCase("remsound"))) {
+					return null;
+				}
+				ArrayList<String> sounds = new ArrayList<String>();
+
+				if (args[0].equalsIgnoreCase("addsound")) {
+					if (!args[2].equals("")) {
+						for (Sound sound : Sound.values()) {
+							if (sound.name().toLowerCase().startsWith(args[2].toLowerCase())) {
+								sounds.add(sound.name().toLowerCase());
+							}
+						}
+					}
+
+					else {
+						for (Sound sound : Sound.values()) {
+							sounds.add(sound.name().toLowerCase());
+						}
+					}
+				} else if (!Main.getbAnnouncer().getSoundMap().isEmpty() && Main.getbAnnouncer().isValidID(args[1])) {
+					if (!args[2].equals("")) {
+						for (Entry<String, List<Sound>> entry : Main.getbAnnouncer().getSoundMap().entrySet()) {
+							if (entry.getKey().equalsIgnoreCase(args[1])) {
+								for (Sound sound : entry.getValue()) {
+									if (sound.name().toLowerCase().startsWith(args[2].toLowerCase())) {
+										sounds.add(sound.name().toLowerCase());
+									}
+								}
+								break;
+							}
+						}
+					}
+
+					else {
+						for (Entry<String, List<Sound>> entry : Main.getbAnnouncer().getSoundMap().entrySet()) {
+							if (entry.getKey().equalsIgnoreCase(args[1])) {
+								for (Sound sound : entry.getValue()) {
+									sounds.add(sound.name().toLowerCase());
+								}
+								break;
+							}
+						}
+					}
+				}
+
+				Collections.sort(sounds);
+
+				return sounds;
+			}
+		}
+		return null;
 	}
 	
 	private void help(CommandSender sender) {

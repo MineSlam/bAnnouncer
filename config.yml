@@ -1,29 +1,32 @@
-# bAnnouncer v1.2.6 by Spittn/Coltify.
+# bAnnouncer v1.2.7 by Spittn/Coltify.
 # Command -> /ba 
 # Permission node -> 'bannouncer.ba'
 # Message interval (In seconds).
 Interval: 30
+#
 # Messages displayed in a random order?
 Random: false
+#
 # Want an announcement to be fully centered? Add it's ID to the list!
 Centered-messages:
   - "message1"
   - "message2"
   - "message3"
-
+#
 # Want a sound to play when a certain announcement is broadcasted? 
 # Here is an up to date list of sounds you can use:
 # https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html
 Sounds:
   message1:
     - "BLOCK_NOTE_PLING"
+#
 # To reference an announcement in game you must use it's ID
 # which can be anything you desire. Default -> message1, message2 ect.
 Messages:
   message1: 
     - "&8&m------------------------------------------" 
     - ""
-    - "&ebAnnouncer &6v1.2 &eby &6Coltify."
+    - "&ebAnnouncer &6v1.2.7 &eby &6Coltify."
     - ""
     - "&8&m------------------------------------------"
   message2:
@@ -38,7 +41,7 @@ Messages:
     - "&ebAnnouncer now has a &6Message centering&e feature!"
     - ""
     - "&8&m------------------------------------------" 
-
+#
 # This is the format used for the command /ba broadcast <text>
 Broadcast:
   format:
@@ -48,6 +51,7 @@ Broadcast:
     - ""
     - "&8&m------------------------------------------" 
   centered: true
+#
 # Messages in this section will only be broadcasted to the player if they are in the specified world.
 World-messaging:
   world:

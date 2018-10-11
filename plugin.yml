@@ -1,8 +1,8 @@
 name: bAnnouncer
 main: dev.spittn.bannouncer.Main
-version: 1.2.6
+version: 1.2.7
 author: Spittn AKA Coltify
-description: Auto announcement plugin developed by Spittn / Coltify
+description: Auto announcement with a messaging centering feature that outshines any other!
 commands: 
   ba:
    description: Manage and control announcements easily.

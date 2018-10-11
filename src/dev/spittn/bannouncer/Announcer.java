@@ -27,7 +27,7 @@ public class Announcer {
 	private HashMap<String, List<Sound>> soundMap;
 	private HashMap<World, List<String>> worldMap;
 
-	private boolean isRunning, isRandom, isBroadcastCentered, usePAPI;
+	private boolean isRunning, isRandom, isBroadcastCentered, useClips, useMVdW;
 	private int interval, current; 
 	
 	public Announcer() {
@@ -49,7 +49,8 @@ public class Announcer {
 		broadcastFormat = config.getStringList("Broadcast.format");
 		isBroadcastCentered = config.getBoolean("Broadcast.centered");
 		
-		usePAPI = Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI");
+		useClips = Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI");
+		useMVdW = Bukkit.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI");
 		
 		messageIDs = Lists.newArrayList();
 		centeredIDs = Lists.newArrayList();
@@ -178,24 +179,32 @@ public class Announcer {
 				}
 			}
 			if (centeredIDs.contains(id)) {
-				if (usePAPI) {
-					for (String line : config.getStringList("Messages." + id)) {
-						Util.sendCenteredMessage(player, PlaceholderAPI.setPlaceholders(player, line).replace("&", "§"));
+				for (String line : config.getStringList("Messages." + id)) {
+					line = line.replace("&", "§");
+					
+					if (useClips) {
+						line = PlaceholderAPI.setPlaceholders(player, line);
+					} 
+					
+					if (useMVdW) {
+						line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
 					}
-				} else {
-					for (String line : config.getStringList("Messages." + id)) {
-						Util.sendCenteredMessage(player, line.replace("&", "§"));
-					}
+					
+					Util.sendCenteredMessage(player, line);
 				}
 			} else {
-				if (usePAPI) {
-					for (String line : config.getStringList("Messages." + id)) {
-						player.sendMessage(PlaceholderAPI.setPlaceholders(player, line).replace("&", "§"));
-					}	
-				} else {
-					for (String line : config.getStringList("Messages." + id)) {
-						player.sendMessage(line.replace("&", "§"));
-					}	
+				for (String line : config.getStringList("Messages." + id)) {
+					line = line.replace("&", "§");
+					
+					if (useClips) {
+						line = PlaceholderAPI.setPlaceholders(player, line);
+					} 
+					
+					if (useMVdW) {
+						line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
+					}
+					
+					player.sendMessage(line);
 				}
 			}
 		}
@@ -218,24 +227,32 @@ public class Announcer {
 			}
 		}
 		if (centeredIDs.contains(id)) {
-			if (usePAPI) {
-				for (String line : config.getStringList("Messages." + id)) {
-					Util.sendCenteredMessage(player, PlaceholderAPI.setPlaceholders(player, line).replace("&", "§"));
+			for (String line : config.getStringList("Messages." + id)) {
+				line = line.replace("&", "§");
+				
+				if (useClips) {
+					line = PlaceholderAPI.setPlaceholders(player, line);
+				} 
+				
+				if (useMVdW) {
+					line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
 				}
-			} else {
-				for (String line : config.getStringList("Messages." + id)) {
-					Util.sendCenteredMessage(player, line.replace("&", "§"));
-				}
+				
+				Util.sendCenteredMessage(player, line);
 			}
 		} else {
-			if (usePAPI) {
-				for (String line : config.getStringList("Messages." + id)) {
-					player.sendMessage(PlaceholderAPI.setPlaceholders(player, line).replace("&", "§"));
-				}	
-			} else {
-				for (String line : config.getStringList("Messages." + id)) {
-					player.sendMessage(line.replace("&", "§"));
-				}	
+			for (String line : config.getStringList("Messages." + id)) {
+				line = line.replace("&", "§");
+
+				if (useClips) {
+					line = PlaceholderAPI.setPlaceholders(player, line);
+				}
+
+				if (useMVdW) {
+					line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
+				}
+
+				player.sendMessage(line);
 			}
 		}
 	}
@@ -246,18 +263,58 @@ public class Announcer {
 				if (line.contains("%text%") && text.contains("<nl>")) {
 					if (isBroadcastCentered) {
 						for (String part : text.split("<nl>")) {
-							Util.sendCenteredMessage(player, line.replace("&", "§").replace("%text%", part.replace("&", "§")));	
+							line = line.replace("&", "§");
+
+							if (useClips) {
+								part = PlaceholderAPI.setPlaceholders(player, part);
+							}
+
+							if (useMVdW) {
+								part = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, part);
+							}
+								
+							Util.sendCenteredMessage(player, line.replace("%text%", part.replace("&", "§")));	
 						}
 					} else {
 						for (String part : text.split("<nl>")) {
-							player.sendMessage(line.replace("&", "§").replace("%text%", part.replace("&", "§")));	
+							line = line.replace("&", "§");
+
+							if (useClips) {
+								part = PlaceholderAPI.setPlaceholders(player, part);
+							}
+
+							if (useMVdW) {
+								part = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, part);
+							}
+							
+							player.sendMessage(line.replace("%text%", part.replace("&", "§")));	
 						}
 					}
 				} else {
 					if (isBroadcastCentered) {
-						Util.sendCenteredMessage(player, line.replace("&", "§").replace("%text%", text.replace("&", "§")));	
+						line = line.replace("&", "§");
+
+						if (useClips) {
+							text = PlaceholderAPI.setPlaceholders(player, text);
+						}
+
+						if (useMVdW) {
+							text = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, text);
+						}
+							
+						Util.sendCenteredMessage(player, line.replace("%text%", text.replace("&", "§")));	
 					} else {
-						player.sendMessage(line.replace("&", "§").replace("%text%", text.replace("&", "§")));	
+						line = line.replace("&", "§");
+
+						if (useClips) {
+							text = PlaceholderAPI.setPlaceholders(player, text);
+						}
+
+						if (useMVdW) {
+							text = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, text);
+						}
+						
+						player.sendMessage(line.replace("%text%", text.replace("&", "§")));	
 					}
 				}
 			}
@@ -267,7 +324,7 @@ public class Announcer {
 	public void printMessage(String id) {
 		id = id.toLowerCase();
 		for (String line : config.getStringList("Messages." + id)) {
-			System.out.println(line.replaceAll("&", "§"));
+			System.out.println(line.replace("&", "§"));
 		}
 	}
 	
@@ -299,7 +356,14 @@ public class Announcer {
 	 * @return Is server using Clip's PlaceholderAPI
 	 */
 	public boolean isUsingPAPI() {
-		return usePAPI;
+		return useClips;
+	}
+	
+	/**
+	 * @return Is server using MVdWPlaceholderAPI
+	 */
+	public boolean isUsingMVdWPlaceholderAPI() {
+		return useMVdW;
 	}
 	
 	public boolean isBroadcastCentered() {

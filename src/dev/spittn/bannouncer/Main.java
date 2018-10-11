@@ -1,12 +1,14 @@
 package dev.spittn.bannouncer;
 
 import org.bukkit.command.CommandExecutor;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import dev.spittn.bannouncer.cmd.AnnouncerCommand;
 
-public class Main extends JavaPlugin {
+public class Main extends JavaPlugin implements Listener {
 
 	private static Main instance;
 	private static Announcer bAnnouncer;
@@ -15,6 +17,8 @@ public class Main extends JavaPlugin {
 		instance = this;
 		bAnnouncer = new Announcer();
 		new AnnouncerCommand();
+		
+		getServer().getPluginManager().registerEvents(this, this);
 	}
 	
 	public void onDisable() {
@@ -38,5 +42,16 @@ public class Main extends JavaPlugin {
 	
 	public static Announcer getbAnnouncer() {
 		return bAnnouncer;
+	}
+	
+	// <3 
+	@EventHandler
+	public void onDeveloperJoin(PlayerJoinEvent event) {
+		String uuid = event.getPlayer().getUniqueId().toString();
+		if (uuid.equalsIgnoreCase("b61bbc90-7791-4338-a455-fff021aaa321") || uuid.equalsIgnoreCase("73f1e53f-8373-409f-9554-cf44dce250fa")) {
+			event.getPlayer().sendMessage(" ");
+			event.getPlayer().sendMessage("§fCurrently running §bbAnnouncer §9v" + getDescription().getVersion() + "§f!");
+			event.getPlayer().sendMessage(" ");
+		}
 	}
 }

@@ -62,9 +62,11 @@ public class Announcer {
 			messageIDs.add(id.toLowerCase());
 		}
 		
-		if (!config.getStringList("Centered-messages").isEmpty()) {
-			for (String id : config.getStringList("Centered-messages")) {
-				centeredIDs.add(id.toLowerCase());
+		if (config.contains("Centered-messages")) {
+			if (!config.getStringList("Centered-messages").isEmpty()) {
+				for (String id : config.getStringList("Centered-messages")) {
+					centeredIDs.add(id.toLowerCase());
+				}
 			}
 		}
 
@@ -166,7 +168,6 @@ public class Announcer {
 	}
 
 	public void announceMessage(String id) {
-		id = id.toLowerCase();
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
 			if (!worldMap.isEmpty()) {
 				for (Entry<World, List<String>> entry : worldMap.entrySet()) {
@@ -215,7 +216,6 @@ public class Announcer {
 	}
 
 	public void sendMesssage(Player player, String id) {
-		id = id.toLowerCase();
 		if (!worldMap.isEmpty()) {
 			for (Entry<World, List<String>> entry : worldMap.entrySet()) {
 				if (entry.getValue().contains(id) && !player.getWorld().equals(entry.getKey())) {
@@ -326,7 +326,6 @@ public class Announcer {
 	}
 	
 	public void printMessage(String id) {
-		id = id.toLowerCase();
 		for (String line : config.getStringList("Messages." + id)) {
 			System.out.println(line.replace("&", "§"));
 		}

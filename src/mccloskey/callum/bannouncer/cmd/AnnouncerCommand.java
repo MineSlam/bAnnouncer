@@ -1,4 +1,4 @@
-package dev.spittn.bannouncer.cmd;
+package mccloskey.callum.bannouncer.cmd;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,9 +14,9 @@ import org.bukkit.entity.Player;
 
 import com.mysql.jdbc.StringUtils;
 
-import dev.spittn.bannouncer.Announcer;
-import dev.spittn.bannouncer.Main;
-import dev.spittn.bannouncer.util.Util;
+import mccloskey.callum.bannouncer.Announcer;
+import mccloskey.callum.bannouncer.Main;
+import mccloskey.callum.bannouncer.util.Util;
 
 public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 	
@@ -31,11 +31,6 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
 		if (!sender.hasPermission("bannouncer.ba")) {
 			sender.sendMessage("§cYou don't have permission to use this command.");
-			return true;
-		}
-		
-		if (args.length == 0) {
-			help(sender);
 			return true;
 		}
 		
@@ -103,6 +98,8 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 			return true;			
 		}
 		
+		String id = "";
+		
 		if (args.length == 2) {
 			if (args[0].equalsIgnoreCase("setrandom")) {
 				if (StringUtils.startsWithIgnoreCase(args[1], "y")) {
@@ -120,6 +117,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 				message(sender, false, "&eYou have not chosen a valid option: &6Yes &eor &6No");
 				return true;
 			}
+			
 			if (args[0].equalsIgnoreCase("setinterval")) {
 				int interval = 0;
 				try {
@@ -133,22 +131,26 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 				message(sender, false, "&8&l» &eYou have set the interval to &6" + interval + "&e.");
 				return true;
 			}
+			
 			if (args[0].equalsIgnoreCase("delmessage")) {
 				if (announcer.isValidID(args[1])) {
-					announcer.removeMessage(args[1]);
-					message(sender, false, "&8&l» &eYou have deleted message: &6" + args[1].toLowerCase() + "&e.");
+					id = announcer.getExact(args[1]);
+					announcer.removeMessage(id);
+					message(sender, false, "&8&l» &eYou have deleted message: &6" + id + "&e.");
 				} else {
 					message(sender, false, "&eThe value you have entered is not a valid id! &8'&c" + args[1] + "&8'.");
 				}
 				return true;
 			}
+			
 			if (args[0].equalsIgnoreCase("show")) {
 				if (announcer.isValidID(args[1])) {
-					message(sender, false, "&8&l» &ePrivately showing announcement &6" + args[1].toLowerCase() + "&e.");
+					id = announcer.getExact(args[1]);
+					message(sender, false, "&8&l» &ePrivately showing announcement &6" + id + "&e.");
 					if (sender instanceof Player) {
-						announcer.sendMesssage(((Player)sender), args[1]);	
+						announcer.sendMesssage(((Player)sender), id);	
 					} else {
-						announcer.printMessage(args[1]);
+						announcer.printMessage(id);
 					}
 				} else {
 					message(sender, false, "&eThe value you have entered is not a valid id! &8'&c" + args[1] + "&8'.");
@@ -162,23 +164,25 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 		if (args.length == 3) {
 			if (args[0].equalsIgnoreCase("setcentered")) {
 				if (announcer.isValidID(args[1])) {
+					id = announcer.getExact(args[1]);
+					
 					if (StringUtils.startsWithIgnoreCase(args[2], "y")) {
-						if (!announcer.isValidCID(args[1])) {
-							announcer.setCentered(args[1]);
-							message(sender, false, "&8&l» &eYou have centered the message &6" + args[1].toLowerCase() + "&e.");		
+						if (!announcer.isValidCID(id)) {
+							announcer.setCentered(id);
+							message(sender, false, "&8&l» &eYou have centered the message &6" + id + "&e.");		
 							return true;
 						}
-						message(sender, false, "&8&l» &eThe message &6" + args[1].toLowerCase() + "&e is already centered.");
+						message(sender, false, "&8&l» &eThe message &6" + id + "&e is already centered.");
 						return true;
 					} 
 					
 					if (StringUtils.startsWithIgnoreCase(args[2], "n")) {
-						if (announcer.isValidCID(args[1])) {
-							announcer.removeCentered(args[1]);
-							message(sender, false, "&8&l» &eYou have uncentered the message &6" + args[1].toLowerCase() + "&e.");
+						if (announcer.isValidCID(id)) {
+							announcer.removeCentered(id);
+							message(sender, false, "&8&l» &eYou have uncentered the message &6" + id + "&e.");
 							return true;
 						} 
-						message(sender, false, "&8&l» &eThe message &6" + args[1].toLowerCase() + "&e is not centered.");
+						message(sender, false, "&8&l» &eThe message &6" + id +  "&e is not centered.");
 						return true;
 					} 
 					
@@ -201,14 +205,18 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 						message(sender, false, "&eThe value you have entered is not a valid sound! &8'&c" + args[2] + "&8'.");
 						return true;
 					}
-					if (announcer.getSoundMap().containsKey(args[1])) {
-						if (announcer.getSoundMap().get(args[1]).contains(s)) {
-							message(sender, false, "&eThe message &6" + args[1].toLowerCase() + "&e already has this sound added.");
+
+					id = announcer.getExact(args[1]);
+					
+					if (announcer.getSoundMap().containsKey(id)) {
+						if (announcer.getSoundMap().get(id).contains(s)) {
+							message(sender, false, "&eThe message &6" + id + "&e already has this sound added.");
 							return true;
 						}
 					}
-					announcer.addSound(args[1], s);
-					message(sender, false,  "&8&l» &eThe sound &6" + args[2].toLowerCase() + "&e has been added to &6" + args[1].toLowerCase() + "&e.");
+					
+					announcer.addSound(id, s);
+					message(sender, false,  "&8&l» &eThe sound &6" + args[2].toLowerCase() + "&e has been added to &6" + id + "&e.");
 					return true;
 				}
 				message(sender, false, "&eThe value you have entered is not a valid id! &8'&c" + args[1] + "&8'.");
@@ -227,24 +235,29 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 						message(sender, false, "&eThe value you have entered is not a valid sound! &8'&c" + args[2] + "&8'.");
 						return true;
 					}
-					if (announcer.getSoundMap().containsKey(args[1])) {
-						if (!announcer.getSoundMap().get(args[1]).contains(s)) {
-							message(sender, false, "&eThe message &6" + args[1].toLowerCase() + "&e does not have this sound added.");
+
+					id = announcer.getExact(args[1]);
+					
+					if (announcer.getSoundMap().containsKey(id)) {
+						if (!announcer.getSoundMap().get(id).contains(s)) {
+							message(sender, false, "&eThe message &6" + id + "&e does not have this sound added.");
 							return true;
 						}
 					}
-					announcer.remSound(args[1], s);
-					message(sender, false,  "&8&l» &eThe sound &6" + args[2].toLowerCase() + "&e has been removed from &6" + args[1].toLowerCase() + "&e.");
+					
+					announcer.remSound(id, s);
+					message(sender, false,  "&8&l» &eThe sound &6" + args[2].toLowerCase() + "&e has been removed from &6" + id + "&e.");
 					return true;
 				}
 				message(sender, false, "&eThe value you have entered is not a valid id! &8'&c" + args[1] + "&8'.");
 				return true;
 			}
+			
 			help(sender);
+			return true;
 		}
 		
 		help(sender);
-		
 		return false;
 	}
 	
@@ -336,7 +349,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 	private void help(CommandSender sender) {
 		message(sender, true,
 				"&8&m------------------------------------------", 
-				"&ebAnnouncer &6v1.2.7 &eby &6Spittn",
+				"&ebAnnouncer &6v1.2.8 &eby &6Callum McCloskey",
 				"&8&m------------------------------------------");
 		message(sender, false, 		
 				"&8&l»     &8/&eba setrandom &6<y/n> &8- &7Ranomize message order.",

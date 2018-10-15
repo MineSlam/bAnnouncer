@@ -1,7 +1,7 @@
-name: bAnnouncer
-main: dev.spittn.bannouncer.Main
-version: 1.2.7
-author: Spittn AKA Coltify
+wname: bAnnouncer
+main: mccloskey.callum.bannouncer.Main
+version: 1.2.8
+author: Callum McCloskey (Coltify)
 description: Auto announcement with a messaging centering feature that outshines any other!
 commands: 
   bannouncer:

@@ -1,4 +1,4 @@
-package dev.spittn.bannouncer;
+package mccloskey.callum.bannouncer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -14,13 +14,13 @@ import org.bukkit.scheduler.BukkitTask;
 
 import com.google.common.collect.Lists;
 
-import dev.spittn.bannouncer.util.SPTNFile;
-import dev.spittn.bannouncer.util.Util;
+import mccloskey.callum.bannouncer.util.BFile;
+import mccloskey.callum.bannouncer.util.Util;
 import me.clip.placeholderapi.PlaceholderAPI;
 
 public class Announcer {
 
-	private SPTNFile config;
+	private BFile config;
 	private BukkitTask task;
 	
 	private List<String> messageIDs, centeredIDs, broadcastFormat;
@@ -36,11 +36,11 @@ public class Announcer {
 	}
 	
 	public void load() {
-		config = new SPTNFile("plugins/bAnnouncer/config.yml/");
+		config = new BFile("plugins/bAnnouncer/config.yml/");
 		if (!config.doesFileExist()) {
 			System.out.println("[bAnnouncer] [ERROR] Could not locate configuration file! Loading default configuration file.");
 			Main.getInstance().saveDefaultConfig();
-			config = new SPTNFile("plugins/bAnnouncer/config.yml/");
+			config = new BFile("plugins/bAnnouncer/config.yml/");
 		}
 		
 		interval = config.getInt("Interval"); 
@@ -116,8 +116,12 @@ public class Announcer {
 			
 			@Override
 			public void run() {
-				if (!isRunning && Bukkit.getScheduler().isCurrentlyRunning(task.getTaskId())) {
+				if (!isRunning) {
 					task.cancel();
+					return;
+				}
+				if (Bukkit.getOnlinePlayers().size() == 0) {
+					// do nothing 
 					return;
 				}
 				if (isRandom) {
@@ -336,7 +340,7 @@ public class Announcer {
 		return centeredIDs;
 	}
 	
-	public SPTNFile getConfig() {
+	public BFile getConfig() {
 		return config;
 	}
 	
@@ -374,6 +378,16 @@ public class Announcer {
 		return interval;
 	}
 	
+	public String getExact(String id) {
+		for (String xid : getMessageIDs()) {
+			if (id.equalsIgnoreCase(xid)) {
+				return xid;
+			}
+		}
+		
+		return null;
+	}
+	
 	public boolean isValidID(String id) {
 		for (String xid : getMessageIDs()) {
 			if (id.equalsIgnoreCase(xid)) {
@@ -407,7 +421,6 @@ public class Announcer {
 	}
 	
 	public void setCentered(String id) {
-		id = id.toLowerCase();
 		if (!isValidCID(id)) {
 			centeredIDs.add(id);
 			config.set("Centered-messages", centeredIDs);
@@ -415,7 +428,6 @@ public class Announcer {
 	}
 	
 	public void removeMessage(String id) {
-		id = id.toLowerCase();
 		if (isValidID(id)) {
 			messageIDs.remove(id);
 			config.set("Messages." + id, null);
@@ -428,7 +440,6 @@ public class Announcer {
 	}
 	
 	public void removeCentered(String id) {
-		id = id.toLowerCase();
 		if (centeredIDs.contains(id)) {
 			centeredIDs.remove(id);
 			config.set("Centered-messages", centeredIDs);
@@ -436,7 +447,6 @@ public class Announcer {
 	}
 	
 	public void addSound(String id, Sound sound) {
-		id = id.toLowerCase();
 		if (isValidID(id)) {
 			if (soundMap.containsKey(id)) {
 				List<Sound> sounds = soundMap.get(id);
@@ -457,7 +467,6 @@ public class Announcer {
 	}
 	
 	public void remSound(String id, Sound sound) {
-		id = id.toLowerCase();
 		if (isValidID(id)) {
 			if (soundMap.containsKey(id)) {
 				List<Sound> sounds = soundMap.get(id);

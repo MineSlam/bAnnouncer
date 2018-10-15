@@ -1,4 +1,4 @@
-package dev.spittn.bannouncer.util;
+package mccloskey.callum.bannouncer.util;
 
 import java.io.File;
 import java.io.IOException;
@@ -9,17 +9,17 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.file.YamlConfigurationOptions;
 import org.bukkit.inventory.ItemStack;
 
-public class SPTNFile {
+public class BFile {
 
 	private File file = null;
 	private YamlConfiguration yaml = new YamlConfiguration();
 
-	public SPTNFile(File file) {
+	public BFile(File file) {
 		this.file = file;
 		load();
 	}
 
-	public SPTNFile(String path) {
+	public BFile(String path) {
 		file = new File(path);
 		load();
 	}

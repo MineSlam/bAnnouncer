@@ -1,4 +1,4 @@
-package dev.spittn.bannouncer.util;
+package mccloskey.callum.bannouncer.util;
 /**
  * @Author SirSpoodles
  * 

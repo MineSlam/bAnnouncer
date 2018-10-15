@@ -1,4 +1,4 @@
-package dev.spittn.bannouncer;
+package mccloskey.callum.bannouncer;
 
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.event.EventHandler;
@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import dev.spittn.bannouncer.cmd.AnnouncerCommand;
+import mccloskey.callum.bannouncer.cmd.AnnouncerCommand;
 
 public class Main extends JavaPlugin implements Listener {
 

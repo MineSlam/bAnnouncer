@@ -20,7 +20,7 @@ import me.clip.placeholderapi.PlaceholderAPI;
 
 public class Announcer {
 
-	private BFile config;
+	private BFile config, toggled;
 	private BukkitTask task;
 	
 	private List<String> messageIDs, centeredIDs, broadcastFormat;
@@ -41,6 +41,12 @@ public class Announcer {
 			System.out.println("[bAnnouncer] [ERROR] Could not locate configuration file! Loading default configuration file.");
 			Main.getInstance().saveDefaultConfig();
 			config = new BFile("plugins/bAnnouncer/config.yml/");
+		}
+		toggled = new BFile("plugins/bAnnouncer/toggled.yml/");
+		
+		if (!toggled.doesFileExist()) {
+			toggled.createFile();
+			toggled.add("users", Lists.newArrayList());
 		}
 		
 		interval = config.getInt("Interval"); 
@@ -169,6 +175,9 @@ public class Announcer {
 
 	public void announceMessage(String id) {
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+			if (!toggled.getStringList("users").contains(player.getUniqueId().toString())) {
+				return;
+			}
 			if (!worldMap.isEmpty()) {
 				for (Entry<World, List<String>> entry : worldMap.entrySet()) {
 					if (entry.getValue().contains(id) && !player.getWorld().equals(entry.getKey())) {
@@ -216,6 +225,9 @@ public class Announcer {
 	}
 
 	public void sendMesssage(Player player, String id) {
+		if (!toggled.getStringList("users").contains(player.getUniqueId().toString())) {
+			return;
+		}
 		if (!worldMap.isEmpty()) {
 			for (Entry<World, List<String>> entry : worldMap.entrySet()) {
 				if (entry.getValue().contains(id) && !player.getWorld().equals(entry.getKey())) {

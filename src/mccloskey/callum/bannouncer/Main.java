@@ -7,6 +7,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import mccloskey.callum.bannouncer.cmd.AnnouncerCommand;
+import mccloskey.callum.bannouncer.cmd.ToggleCommand;
 
 public class Main extends JavaPlugin implements Listener {
 
@@ -16,7 +17,9 @@ public class Main extends JavaPlugin implements Listener {
 	public void onEnable() {
 		instance = this;
 		bAnnouncer = new Announcer();
+		
 		new AnnouncerCommand();
+		new ToggleCommand();
 		
 		getServer().getPluginManager().registerEvents(this, this);
 	}

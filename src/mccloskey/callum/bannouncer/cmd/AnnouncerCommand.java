@@ -5,14 +5,13 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map.Entry;
 
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-
-import com.mysql.jdbc.StringUtils;
 
 import mccloskey.callum.bannouncer.Announcer;
 import mccloskey.callum.bannouncer.Main;
@@ -349,7 +348,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 	private void help(CommandSender sender) {
 		message(sender, true,
 				"&8&m------------------------------------------", 
-				"&ebAnnouncer &6v1.2.8 &eby &6Callum McCloskey",
+				"&ebAnnouncer &6v1.2.9 &eby &6Callum McCloskey",
 				"&8&m------------------------------------------");
 		message(sender, false, 		
 				"&8&l»     &8/&eba setrandom &6<y/n> &8- &7Ranomize message order.",

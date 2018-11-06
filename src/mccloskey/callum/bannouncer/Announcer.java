@@ -23,7 +23,7 @@ public class Announcer {
 	private BFile config, toggled;
 	private BukkitTask task;
 	
-	private List<String> messageIDs, centeredIDs, broadcastFormat;
+	private List<String> messageIDs, centeredIDs, broadcastFormat, toggledUsers;
 	private HashMap<String, List<Sound>> soundMap;
 	private HashMap<World, List<String>> worldMap;
 
@@ -48,6 +48,8 @@ public class Announcer {
 			toggled.createFile();
 			toggled.add("users", Lists.newArrayList());
 		}
+		
+		toggledUsers = toggled.getStringList("users");
 		
 		interval = config.getInt("Interval"); 
 		isRandom = config.getBoolean("Random");
@@ -175,9 +177,56 @@ public class Announcer {
 
 	public void announceMessage(String id) {
 		for (Player player : Bukkit.getServer().getOnlinePlayers()) {
-			if (!toggled.getStringList("users").contains(player.getUniqueId().toString())) {
-				return;
+			if (!isToggled(player)) {
+				if (!worldMap.isEmpty()) {
+					for (Entry<World, List<String>> entry : worldMap.entrySet()) {
+						if (entry.getValue().contains(id) && !player.getWorld().equals(entry.getKey())) {
+							return;
+						}
+					}
+				}
+				if (!soundMap.isEmpty()) {
+					if (soundMap.containsKey(id)) {
+						for (Sound s : soundMap.get(id)) {
+							player.playSound(player.getLocation(), s, 1, 1);
+						}
+					}
+				}
+				if (centeredIDs.contains(id)) {
+					for (String line : config.getStringList("Messages." + id)) {
+						line = line.replace("&", "§");
+						
+						if (useClips) {
+							line = PlaceholderAPI.setPlaceholders(player, line);
+						} 
+						
+						if (useMVdW) {
+							line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
+						}
+						
+						Util.sendCenteredMessage(player, line);
+					}
+				} else {
+					for (String line : config.getStringList("Messages." + id)) {
+						line = line.replace("&", "§");
+						
+						if (useClips) {
+							line = PlaceholderAPI.setPlaceholders(player, line);
+						} 
+						
+						if (useMVdW) {
+							line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
+						}
+						
+						player.sendMessage(line);
+					}
+				}
 			}
+		}
+	}
+
+	public void sendMesssage(Player player, String id) {
+		if (!isToggled(player)) {
 			if (!worldMap.isEmpty()) {
 				for (Entry<World, List<String>> entry : worldMap.entrySet()) {
 					if (entry.getValue().contains(id) && !player.getWorld().equals(entry.getKey())) {
@@ -209,67 +258,18 @@ public class Announcer {
 			} else {
 				for (String line : config.getStringList("Messages." + id)) {
 					line = line.replace("&", "§");
-					
+
 					if (useClips) {
 						line = PlaceholderAPI.setPlaceholders(player, line);
-					} 
-					
+					}
+
 					if (useMVdW) {
 						line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
 					}
-					
+
 					player.sendMessage(line);
 				}
-			}
-		}
-	}
-
-	public void sendMesssage(Player player, String id) {
-		if (!toggled.getStringList("users").contains(player.getUniqueId().toString())) {
-			return;
-		}
-		if (!worldMap.isEmpty()) {
-			for (Entry<World, List<String>> entry : worldMap.entrySet()) {
-				if (entry.getValue().contains(id) && !player.getWorld().equals(entry.getKey())) {
-					return;
-				}
-			}
-		}
-		if (!soundMap.isEmpty()) {
-			if (soundMap.containsKey(id)) {
-				for (Sound s : soundMap.get(id)) {
-					player.playSound(player.getLocation(), s, 1, 1);
-				}
-			}
-		}
-		if (centeredIDs.contains(id)) {
-			for (String line : config.getStringList("Messages." + id)) {
-				line = line.replace("&", "§");
-				
-				if (useClips) {
-					line = PlaceholderAPI.setPlaceholders(player, line);
-				} 
-				
-				if (useMVdW) {
-					line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
-				}
-				
-				Util.sendCenteredMessage(player, line);
-			}
-		} else {
-			for (String line : config.getStringList("Messages." + id)) {
-				line = line.replace("&", "§");
-
-				if (useClips) {
-					line = PlaceholderAPI.setPlaceholders(player, line);
-				}
-
-				if (useMVdW) {
-					line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
-				}
-
-				player.sendMessage(line);
-			}
+			}	
 		}
 	}
 	
@@ -387,6 +387,20 @@ public class Announcer {
 	
 	public int getInterval() {
 		return interval;
+	}
+	
+	public boolean isToggled(Player player) {
+		return toggledUsers.contains(player.getUniqueId().toString());
+	}
+	
+	public void setToggled(Player player, boolean toggle) {
+		if (toggle && !isToggled(player)) {
+			toggledUsers.add(player.getUniqueId().toString());
+		} else if (!toggle && isToggled(player)){
+			toggledUsers.remove(player.getUniqueId().toString());
+		}
+		
+		toggled.set("users", toggledUsers);
 	}
 	
 	public String getExact(String id) {

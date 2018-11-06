@@ -1,5 +1,5 @@
-# bAnnouncer v1.2.8 by Callum McCloskey (Coltify(
-# Command -> /ba 
+# bAnnouncer v1.2.9 by Callum McCloskey (Coltify)
+# Command -> /ba | /bannouncer
 # Permission node -> 'bannouncer.ba'
 # Message interval (In seconds).
 Interval: 30

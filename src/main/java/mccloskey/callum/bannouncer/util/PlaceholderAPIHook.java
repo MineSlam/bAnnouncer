@@ -3,6 +3,7 @@ package mccloskey.callum.bannouncer.util;
 import mccloskey.callum.bannouncer.Announcer;
 import mccloskey.callum.bannouncer.Main;
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 public class PlaceholderAPIHook extends PlaceholderExpansion {
@@ -42,7 +43,9 @@ public class PlaceholderAPIHook extends PlaceholderExpansion {
         // %bannouncer_toggled%
         if (params.equals("toggled")) {
             Announcer a = Main.getBAnnouncer();
-            return a.isToggled(player) ? "ON" : "OFF";
+            return a.isToggled(player) ?
+                    ChatColor.translateAlternateColorCodes('&',"&4&lOFF") :
+                    ChatColor.translateAlternateColorCodes('&',"&a&lON");
         }
 
         return null;

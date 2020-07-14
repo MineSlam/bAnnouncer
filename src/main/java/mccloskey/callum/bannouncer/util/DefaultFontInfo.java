@@ -1,8 +1,8 @@
 package mccloskey.callum.bannouncer.util;
 /**
- * @Author SirSpoodles
+// * @Author SirSpoodles
  * 
- * @see https://www.spigotmc.org/threads/free-code-sending-perfectly-centered-chat-message.95872/
+// * @see https://www.spigotmc.org/threads/free-code-sending-perfectly-centered-chat-message.95872/
  */
 public enum DefaultFontInfo {
 
@@ -77,7 +77,7 @@ public enum DefaultFontInfo {
     AMPERSAND('&', 5),
     ASTERISK('*', 5),
     LEFT_PARENTHESIS('(', 4),
-    RIGHT_PERENTHESIS(')', 4),
+    RIGHT_PARENTHESIS(')', 4),
     MINUS('-', 5),
     UNDERSCORE('_', 5),
     PLUS_SIGN('+', 5),
@@ -103,8 +103,8 @@ public enum DefaultFontInfo {
     SPACE(' ', 3),
     DEFAULT('a', 4);
    
-    private char character;
-    private int length;
+    private final char character;
+    private final int length;
    
     DefaultFontInfo(char character, int length) {
             this.character = character;

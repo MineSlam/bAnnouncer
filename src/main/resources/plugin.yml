@@ -1,0 +1,10 @@
+name: ${project.name}
+main: mccloskey.callum.bannouncer.Main
+version: ${project.version}
+authors: [Coltify, Rono]
+description: ${project.description}
+softdepend: [PlaceholderAPI]
+commands:
+  bannouncer:
+    aliases: [ba]
+    description: Manage and control announcements easily

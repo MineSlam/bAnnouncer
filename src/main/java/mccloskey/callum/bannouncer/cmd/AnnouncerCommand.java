@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.ChatColor;
 import org.bukkit.Sound;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -19,15 +20,31 @@ import mccloskey.callum.bannouncer.util.Util;
 
 public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 	
-	private Announcer announcer;
+	private final Announcer announcer;
 	
 	public AnnouncerCommand() {
-		Main.registerCommand(this, "bannouncer");
-		announcer = Main.getbAnnouncer();
+		announcer = Main.getBAnnouncer();
 	}
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args) {
+		if (sender.hasPermission("bannouncer.ta")) {
+			Player player = (Player) sender;
+			Announcer a = Main.getBAnnouncer();
+
+			a.setToggled(player, !a.isToggled(player));
+
+			if (args.length == 1) {
+				if (args[0].equalsIgnoreCase("-s")) {
+					return false;
+				}
+			} else {
+				player.sendMessage(ChatColor.GRAY + "You have " + (!a.isToggled(player) ? "aenabled" : "cdisabled") + " ?7your announcements.");
+			}
+			return false;
+		}
+
+
 		if (!sender.hasPermission("bannouncer.ba")) {
 			sender.sendMessage("§cYou don't have permission to use this command.");
 			return true;
@@ -39,7 +56,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 				
 				int x = 0;
 				for (String id : announcer.getMessageIDs()) {
-					builder.append("&6" + id + "&8, ");
+					builder.append("&6").append(id).append("&8, ");
 					x++;
 				}
 				
@@ -91,13 +108,13 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 		if ((args.length >= 2) && (args[0].equalsIgnoreCase("broadcast") || args[0].equalsIgnoreCase("bc"))) {
 			StringBuilder builder = new StringBuilder();
 			for (int i = 1; i < args.length; i++) {
-				builder.append(args[i] + " ");
+				builder.append(args[i]).append(" ");
 			}
 			announcer.broadcast(builder.toString());
 			return true;			
 		}
 		
-		String id = "";
+		String id;
 		
 		if (args.length == 2) {
 			if (args[0].equalsIgnoreCase("setrandom")) {
@@ -118,7 +135,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 			}
 			
 			if (args[0].equalsIgnoreCase("setinterval")) {
-				int interval = 0;
+				int interval;
 				try {
 					interval = Integer.parseInt(args[1]);
 				} catch (NumberFormatException nfe) {
@@ -269,11 +286,11 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 						|| args[0].equalsIgnoreCase("show") || args[0].equalsIgnoreCase("addsound") || args[0].equalsIgnoreCase("remsound"))) {
 					return null;
 				}
-				ArrayList<String> ids = new ArrayList<String>();
+				ArrayList<String> ids = new ArrayList<>();
 
 
 				if (!args[1].equals("")) {
-					for (String id : Main.getbAnnouncer().getMessageIDs()) {
+					for (String id : Main.getBAnnouncer().getMessageIDs()) {
 						if (id.toLowerCase().startsWith(args[1].toLowerCase())) {
 							ids.add(id);
 						}
@@ -281,9 +298,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 				}
 
 				else {
-					for (String id : Main.getbAnnouncer().getMessageIDs()) {
-						ids.add(id);
-					}
+					ids.addAll(Main.getBAnnouncer().getMessageIDs());
 				}
 
 				Collections.sort(ids);
@@ -295,7 +310,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 				if (!(args[0].equalsIgnoreCase("addsound") || args[0].equalsIgnoreCase("remsound"))) {
 					return null;
 				}
-				ArrayList<String> sounds = new ArrayList<String>();
+				ArrayList<String> sounds = new ArrayList<>();
 
 				if (args[0].equalsIgnoreCase("addsound")) {
 					if (!args[2].equals("")) {
@@ -311,9 +326,9 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 							sounds.add(sound.name().toLowerCase());
 						}
 					}
-				} else if (!Main.getbAnnouncer().getSoundMap().isEmpty() && Main.getbAnnouncer().isValidID(args[1])) {
+				} else if (!Main.getBAnnouncer().getSoundMap().isEmpty() && Main.getBAnnouncer().isValidID(args[1])) {
 					if (!args[2].equals("")) {
-						for (Entry<String, List<Sound>> entry : Main.getbAnnouncer().getSoundMap().entrySet()) {
+						for (Entry<String, List<Sound>> entry : Main.getBAnnouncer().getSoundMap().entrySet()) {
 							if (entry.getKey().equalsIgnoreCase(args[1])) {
 								for (Sound sound : entry.getValue()) {
 									if (sound.name().toLowerCase().startsWith(args[2].toLowerCase())) {
@@ -326,7 +341,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 					}
 
 					else {
-						for (Entry<String, List<Sound>> entry : Main.getbAnnouncer().getSoundMap().entrySet()) {
+						for (Entry<String, List<Sound>> entry : Main.getBAnnouncer().getSoundMap().entrySet()) {
 							if (entry.getKey().equalsIgnoreCase(args[1])) {
 								for (Sound sound : entry.getValue()) {
 									sounds.add(sound.name().toLowerCase());
@@ -360,6 +375,7 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 				"&8&l»     &8/&eba reload &8- &7Reload the config file.",
 				"&8&l»     &8/&eba broadcast &6<text> &8- &7Broadcast a message.",
 				"&8&l»     &8/&eba show &6<id> &8- &7View a message privately.",
+				"&8&l»     &8/&eba toggle &8- &7Toggles announcer for player.",
 				"&8&l»     &8/&eba list &8- &7Lists all valid message IDs.");
 		message(sender, true,
 				"&8&m------------------------------------------");

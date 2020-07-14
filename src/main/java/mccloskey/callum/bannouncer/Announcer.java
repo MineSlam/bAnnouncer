@@ -27,7 +27,7 @@ public class Announcer {
 	private HashMap<String, List<Sound>> soundMap;
 	private HashMap<World, List<String>> worldMap;
 
-	private boolean isRunning, isRandom, isBroadcastCentered, useClips, useMVdW;
+	private boolean isRunning, isRandom, isBroadcastCentered, useClips;
 	private int interval, current; 
 	
 	public Announcer() {
@@ -37,14 +37,14 @@ public class Announcer {
 	
 	public void load() {
 		config = new BFile("plugins/bAnnouncer/config.yml/");
-		if (!config.doesFileExist()) {
+		if (config.doesFileExist()) {
 			System.out.println("[bAnnouncer] [ERROR] Could not locate configuration file! Loading default configuration file.");
 			Main.getInstance().saveDefaultConfig();
 			config = new BFile("plugins/bAnnouncer/config.yml/");
 		}
 		toggled = new BFile("plugins/bAnnouncer/toggled.yml/");
 		
-		if (!toggled.doesFileExist()) {
+		if (toggled.doesFileExist()) {
 			toggled.createFile();
 			toggled.add("users", Lists.newArrayList());
 		}
@@ -58,13 +58,12 @@ public class Announcer {
 		isBroadcastCentered = config.getBoolean("Broadcast.centered");
 		
 		useClips = Bukkit.getServer().getPluginManager().isPluginEnabled("PlaceholderAPI");
-		useMVdW = Bukkit.getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI");
-		
+
 		messageIDs = Lists.newArrayList();
 		centeredIDs = Lists.newArrayList();
 		
-		soundMap = new HashMap<String, List<Sound>>();
-		worldMap = new HashMap<World, List<String>>();
+		soundMap = new HashMap<>();
+		worldMap = new HashMap<>();
 		
 		for (String id : config.getConfigurationSection("Messages").getKeys(false)) {
 			messageIDs.add(id.toLowerCase());
@@ -116,9 +115,9 @@ public class Announcer {
 		}
 	}
 
-	public boolean start() {
+	public void start() {
 		if (isRunning) {
-			return false;
+			return;
 		}
 		isRunning = true;
 		current = 0;
@@ -136,7 +135,8 @@ public class Announcer {
 				}
 				if (isRandom) {
 					// prevent having 2 or more messages appear after each other.
-					int rand = new Random().nextInt(messageIDs.size());
+					new Random().nextInt(messageIDs.size());
+					int rand;
 					do {
 						rand = new Random().nextInt(messageIDs.size());
 					} while (current == rand);
@@ -152,12 +152,11 @@ public class Announcer {
 				}
 			}
 		}.runTaskTimer(Main.getInstance(), 20, interval* 20);
-		return true;
 	}
 	
-	public boolean stop() {
+	public void stop() {
 		if (!isRunning) {
-			return false;
+			return;
 		}
 		isRunning = false;
 		if (task != null) {
@@ -165,7 +164,6 @@ public class Announcer {
 				task.cancel();
 			}
 		}
-		return true;
 	}
 	
 	public void restart() {
@@ -194,28 +192,20 @@ public class Announcer {
 				}
 				if (centeredIDs.contains(id)) {
 					for (String line : config.getStringList("Messages." + id)) {
-						line = line.replace("&", "§");
+						line = line.replace("&", "ï¿½");
 						
 						if (useClips) {
 							line = PlaceholderAPI.setPlaceholders(player, line);
-						} 
-						
-						if (useMVdW) {
-							line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
 						}
 						
 						Util.sendCenteredMessage(player, line);
 					}
 				} else {
 					for (String line : config.getStringList("Messages." + id)) {
-						line = line.replace("&", "§");
+						line = line.replace("&", "ï¿½");
 						
 						if (useClips) {
 							line = PlaceholderAPI.setPlaceholders(player, line);
-						} 
-						
-						if (useMVdW) {
-							line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
 						}
 						
 						player.sendMessage(line);
@@ -243,28 +233,20 @@ public class Announcer {
 			}
 			if (centeredIDs.contains(id)) {
 				for (String line : config.getStringList("Messages." + id)) {
-					line = line.replace("&", "§");
+					line = line.replace("&", "ï¿½");
 					
 					if (useClips) {
 						line = PlaceholderAPI.setPlaceholders(player, line);
 					} 
-					
-					if (useMVdW) {
-						line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
-					}
-					
+
 					Util.sendCenteredMessage(player, line);
 				}
 			} else {
 				for (String line : config.getStringList("Messages." + id)) {
-					line = line.replace("&", "§");
+					line = line.replace("&", "ï¿½");
 
 					if (useClips) {
 						line = PlaceholderAPI.setPlaceholders(player, line);
-					}
-
-					if (useMVdW) {
-						line = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, line);
 					}
 
 					player.sendMessage(line);
@@ -279,58 +261,42 @@ public class Announcer {
 				if (line.contains("%text%") && text.contains("<nl>")) {
 					if (isBroadcastCentered) {
 						for (String part : text.split("<nl>")) {
-							line = line.replace("&", "§");
+							line = line.replace("&", "ï¿½");
 
 							if (useClips) {
 								part = PlaceholderAPI.setPlaceholders(player, part);
 							}
 
-							if (useMVdW) {
-								part = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, part);
-							}
-								
-							Util.sendCenteredMessage(player, line.replace("%text%", part.replace("&", "§")));	
+							Util.sendCenteredMessage(player, line.replace("%text%", part.replace("&", "ï¿½")));	
 						}
 					} else {
 						for (String part : text.split("<nl>")) {
-							line = line.replace("&", "§");
+							line = line.replace("&", "ï¿½");
 
 							if (useClips) {
 								part = PlaceholderAPI.setPlaceholders(player, part);
 							}
-
-							if (useMVdW) {
-								part = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, part);
-							}
 							
-							player.sendMessage(line.replace("%text%", part.replace("&", "§")));	
+							player.sendMessage(line.replace("%text%", part.replace("&", "ï¿½")));	
 						}
 					}
 				} else {
 					if (isBroadcastCentered) {
-						line = line.replace("&", "§");
+						line = line.replace("&", "ï¿½");
 
 						if (useClips) {
 							text = PlaceholderAPI.setPlaceholders(player, text);
-						}
-
-						if (useMVdW) {
-							text = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, text);
 						}
 							
-						Util.sendCenteredMessage(player, line.replace("%text%", text.replace("&", "§")));	
+						Util.sendCenteredMessage(player, line.replace("%text%", text.replace("&", "ï¿½")));	
 					} else {
-						line = line.replace("&", "§");
+						line = line.replace("&", "ï¿½");
 
 						if (useClips) {
 							text = PlaceholderAPI.setPlaceholders(player, text);
 						}
-
-						if (useMVdW) {
-							text = be.maximvdw.placeholderapi.PlaceholderAPI.replacePlaceholders(player, text);
-						}
 						
-						player.sendMessage(line.replace("%text%", text.replace("&", "§")));	
+						player.sendMessage(line.replace("%text%", text.replace("&", "ï¿½")));	
 					}
 				}
 			}
@@ -339,7 +305,7 @@ public class Announcer {
 	
 	public void printMessage(String id) {
 		for (String line : config.getStringList("Messages." + id)) {
-			System.out.println(line.replace("&", "§"));
+			System.out.println(line.replace("&", "ï¿½"));
 		}
 	}
 	
@@ -349,44 +315,6 @@ public class Announcer {
 	
 	public List<String> getCenteredIDs() {
 		return centeredIDs;
-	}
-	
-	public BFile getConfig() {
-		return config;
-	}
-	
-	public BukkitTask getTask() {
-		return task;
-	}
-	
-	public boolean isRunning() {
-		return isRunning;
-	}
-	
-	public boolean isRandom() {
-		return isRandom;
-	}
-	
-	/**
-	 * @return Is server using Clip's PlaceholderAPI
-	 */
-	public boolean isUsingPAPI() {
-		return useClips;
-	}
-	
-	/**
-	 * @return Is server using MVdWPlaceholderAPI
-	 */
-	public boolean isUsingMVdWPlaceholderAPI() {
-		return useMVdW;
-	}
-	
-	public boolean isBroadcastCentered() {
-		return isBroadcastCentered;
-	}
-	
-	public int getInterval() {
-		return interval;
 	}
 	
 	public boolean isToggled(Player player) {
@@ -513,13 +441,5 @@ public class Announcer {
 	
 	public HashMap<String, List<Sound>> getSoundMap() {
 		return soundMap;
-	}
-	
-	public HashMap<World, List<String>> getWorldMap() {
-		return worldMap;
-	}
-	
-	public int getCurrent() {
-		return current;
 	}
 }

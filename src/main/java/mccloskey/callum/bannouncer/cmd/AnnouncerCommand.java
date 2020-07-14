@@ -34,14 +34,10 @@ public class AnnouncerCommand implements CommandExecutor, TabCompleter {
 
             a.setToggled(player, !a.isToggled(player));
 
-            if (args.length == 1) {
-                if (args[0].equalsIgnoreCase("-s")) {
-                    return false;
-                }
-            } else {
-                player.sendMessage(ChatColor.GRAY + "You have " + (!a.isToggled(player) ? "aenabled" : "cdisabled") + " ?7your announcements.");
-            }
-            return false;
+            if (args.length == 1 && args[0].equalsIgnoreCase("toggle")) {
+                player.sendMessage(ChatColor.translateAlternateColorCodes('&', "&7You have " + (!a.isToggled(player) ? "&aenabled" : "&cdisabled") + "&7your annnoucements"));
+                return true;
+            } else return args.length == 2 && args[1].equalsIgnoreCase("-s");
         }
 
 

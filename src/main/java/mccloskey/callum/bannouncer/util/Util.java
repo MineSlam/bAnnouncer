@@ -23,7 +23,7 @@ public class Util {
         boolean isBold = false;
 
         for (char c : message.toCharArray()) {
-            if (c == 'ง') {
+            if (c == 'ยง') {
                 previousCode = true;
             } else if (previousCode) {
                 previousCode = false;
